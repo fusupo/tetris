@@ -8,7 +8,9 @@ $(document).ready(function() {
   var d = 1;
   var currentTime = 0;
 
-  var board = new Board(width, height);
+  var boardModel = [];
+  var boardView = new Board(width, height, cw, ch, boardModel);
+  var currPiece;
 
   //INIT PIECES
   var pI = [
@@ -39,6 +41,17 @@ $(document).ready(function() {
     ['1', '1', '0', '0'],
     ['0', '1', '1', '0']
   ];
+  var pieces = [pI, pJ, pL, pO, pS, pT, pZ];
+
+  //INIT BOARD MODEL
+  for (var y = 0; y < 20; y++) {
+    var tRow = [];
+    for (var x = 0; x < 10; x++) {
+      tRow.push(0);
+    }
+    boardModel.push(tRow);
+  };
+  console.table(boardModel);
 
   // Bind Keys //
   $("body").keydown(function(e) {
@@ -63,13 +76,19 @@ $(document).ready(function() {
     }
   });
 
+  // DEFINE GAME LOOP
   function gameLoop() {
     currentTime++;
     console.log(currentTime);
     //
-    board.update();
+    if(currPiece === undefined){
+      currPiece = new PieceM(pieces[Math.floor(Math.random() * pieces.length)]);
+    }
+    //
+    boardView.update();
   }
 
+  // START GAME LOOP
   gameLoop();
 
 });
