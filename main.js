@@ -11,6 +11,7 @@ $(document).ready(function() {
   var boardModel = [];
   var boardView = new Board(width, height, cw, ch, boardModel);
   var currPiece;
+  var timeOut;
 
   //INIT PIECES
   var pI = [
@@ -55,24 +56,30 @@ $(document).ready(function() {
   // Bind Keys //
   $("body").keydown(function(e) {
     switch (e.keyCode) {
-      case 37:
-        console.log('left');
-        break;
-      case 38:
-        console.log('up');
-        break;
-      case 39:
-        console.log('right');
-        break;
-      case 40:
-        console.log('down');
-        break;
-      case 32:
-        console.log('space');
-        break;
-      default:
-        console.log(e.keyCode);
+    case 37:
+      console.log('left');
+      if(currPiece)currPiece.x --;
+      break;
+    case 38:
+      console.log('up');
+      if(currPiece)currPiece.y --;
+      break;
+    case 39:
+      console.log('right');
+      if(currPiece)currPiece.x ++;
+      break;
+    case 40:
+      console.log('down');
+      if(currPiece)currPiece.y ++;
+      break;
+    case 32:
+      console.log('space');
+      break;
+    default:
+      console.log(e.keyCode);
     }
+    clearTimeout(timeOut);
+    gameLoop();
   });
 
   // DEFINE GAME LOOP
@@ -83,18 +90,13 @@ $(document).ready(function() {
     if (currPiece === undefined) {
       var pieceTpl = pieces[Math.floor(Math.random() * pieces.length)];
       currPiece = new PieceM(pieceTpl);
-      for (var y = 0; y < 2; y++) {
-        for (var x = 0; x < 4; x++) {
-          boardModel[y][x] = pieceTpl[y][x];
-        }
-      }
+      boardView.currPiece = currPiece;
     } else {
 
     }
-    console.table(boardModel);
     //
     boardView.update();
-    setTimeout(gameLoop, 1000);
+    timeOut = setTimeout(gameLoop, 1000);
   }
 
   // START GAME LOOP
