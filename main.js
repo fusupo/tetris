@@ -14,32 +14,32 @@ $(document).ready(function() {
 
   //INIT PIECES
   var pI = [
-    ['1', '1', '1', '1'],
-    ['0', '0', '0', '0']
+    [1, 1, 1, 1],
+    [0, 0, 0, 0]
   ];
   var pJ = [
-    ['1', '1', '1', '0'],
-    ['0', '0', '1', '0']
+    [1, 1, 1, 0],
+    [0, 0, 1, 0]
   ];
   var pL = [
-    ['1', '1', '1', '0'],
-    ['1', '0', '0', '0']
+    [1, 1, 1, 0],
+    [1, 0, 0, 0]
   ];
   var pO = [
-    ['1', '1', '0', '0'],
-    ['1', '1', '0', '0']
+    [1, 1, 0, 0],
+    [1, 1, 0, 0]
   ];
   var pS = [
-    ['0', '1', '1', '0'],
-    ['1', '1', '0', '0']
+    [0, 1, 1, 0],
+    [1, 1, 0, 0]
   ];
   var pT = [
-    ['1', '1', '1', '0'],
-    ['0', '1', '0', '0']
+    [1, 1, 1, 0],
+    [0, 1, 0, 0]
   ];
   var pZ = [
-    ['1', '1', '0', '0'],
-    ['0', '1', '1', '0']
+    [1, 1, 0, 0],
+    [0, 1, 1, 0]
   ];
   var pieces = [pI, pJ, pL, pO, pS, pT, pZ];
 
@@ -51,28 +51,27 @@ $(document).ready(function() {
     }
     boardModel.push(tRow);
   };
-  console.table(boardModel);
 
   // Bind Keys //
   $("body").keydown(function(e) {
     switch (e.keyCode) {
-    case 37:
-      console.log('left');
-      break;
-    case 38:
-      console.log('up');
-      break;
-    case 39:
-      console.log('right');
-      break;
-    case 40:
-      console.log('down');
-      break;
-    case 32:
-      console.log('space');
-      break;
-    default:
-      console.log(e.keyCode);
+      case 37:
+        console.log('left');
+        break;
+      case 38:
+        console.log('up');
+        break;
+      case 39:
+        console.log('right');
+        break;
+      case 40:
+        console.log('down');
+        break;
+      case 32:
+        console.log('space');
+        break;
+      default:
+        console.log(e.keyCode);
     }
   });
 
@@ -81,11 +80,21 @@ $(document).ready(function() {
     currentTime++;
     console.log(currentTime);
     //
-    if(currPiece === undefined){
-      currPiece = new PieceM(pieces[Math.floor(Math.random() * pieces.length)]);
+    if (currPiece === undefined) {
+      var pieceTpl = pieces[Math.floor(Math.random() * pieces.length)];
+      currPiece = new PieceM(pieceTpl);
+      for (var y = 0; y < 2; y++) {
+        for (var x = 0; x < 4; x++) {
+          boardModel[y][x] = pieceTpl[y][x];
+        }
+      }
+    } else {
+
     }
+    console.table(boardModel);
     //
     boardView.update();
+    setTimeout(gameLoop, 1000);
   }
 
   // START GAME LOOP
