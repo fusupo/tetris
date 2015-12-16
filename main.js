@@ -55,29 +55,31 @@ $(document).ready(function() {
 
   // Bind Keys //
   $("body").keydown(function(e) {
-    switch (e.keyCode) {
-    case 37:
-      //console.log('left');
-      if (currPiece && currPiece.x !== 0) currPiece.x--;
-      break;
-    case 38:
-      //console.log('up');
-      //if (currPiece) currPiece.y--;
-      break;
-    case 39:
-      //console.log('right');
-      if (currPiece && currPiece.x < 10 - currPiece.width()) currPiece.x++;
-      break;
-    case 40:
-      //console.log('down');
-      if (currPiece) currPiece.y++;
-      //check collision
-      break;
-    case 32:
-      //console.log('space');
-      break;
-    default:
-      //console.log(e.keyCode);
+    if(currPiece){
+      switch (e.keyCode) {
+      case 37:
+        //console.log('left');
+        if (currPiece.x !== 0) moveLeft();
+        break;
+      case 38:
+        //console.log('up');
+        rotatePiece();
+        break;
+      case 39:
+        //console.log('right');
+        if (currPiece.x < 10 - currPiece.width()) moveRight();
+        break;
+      case 40:
+        //console.log('down');
+        moveDown();//currPiece.y++;
+        break;
+      case 32:
+        //console.log('space');
+        break;
+      default:
+        //console.log(e.keyCode);
+        break;
+      }
     }
     // clearTimeout(timeOut);
     // gameLoop();
@@ -86,7 +88,6 @@ $(document).ready(function() {
 
   // DEFINE GAME LOOP
   function gameLoop() {
-    currentTime++;
     var didLoose = false;
     if (currPiece === undefined) {
       var pieceTpl = pieces[Math.floor(Math.random() * pieces.length)];
@@ -94,32 +95,70 @@ $(document).ready(function() {
       currPiece.x = 5 - Math.floor(currPiece.width() / 2);
       boardView.currPiece = currPiece;
     } else {
-      if (currPiece.y === 20 - currPiece.height()) {
+      didLoose = moveDown();
+    }
+    //
+    if (!didLoose) timeOut = setTimeout(gameLoop, 1000);
+    boardView.update();
+  }
+
+  function moveDown(){
+    var didLoose = false;
+    if (currPiece.y === 20 - currPiece.height()) {
+      didLoose = freezeCurrPiece();
+    } else {
+      currPiece.y++;
+      var hasCollision = checkCollision();
+      if (hasCollision) {
+        currPiece.y--;
         didLoose = freezeCurrPiece();
-      } else {
-        currPiece.y++;
+      }
+    }
+    return didLoose;
+  }
 
-        //check Collision
-        var hasCollision = false;
-        for (var y = 0; y < 2; y++) {
-          for (var x = 0; x < 4; x++) {
-            if(boardModel[y + currPiece.y][x + currPiece.x] === 1 && currPiece.matrix[y][x] === 1){
-              boardView.update();
-              hasCollision = true;
-            }
-          }
-        }
+  function moveLeft(){
+    var didLoose = false;
+    currPiece.x--;
+    var hasCollision = checkCollision();
+    if (hasCollision) {
+      currPiece.x++;
+    }
+    return didLoose;
+  }
 
-        if (hasCollision) {
-          currPiece.y--;
-          didLoose = freezeCurrPiece();
+  function moveRight(){
+    var didLoose = false;
+    currPiece.x++;
+    var hasCollision = checkCollision();
+    if (hasCollision) {
+      currPiece.x--;
+    }
+    return didLoose;
+  }
+
+  function rotatePiece(){
+    var temp = [[], [], [], []];
+    for (var y = 0; y < 2; y++) {
+      for (var x = 0; x < 4; x++) {
+        temp[x][y] = currPiece.matrix[y][x];
+      }
+    }
+    console.table(currPiece.matrix);
+    console.table(temp);
+  }
+
+  function checkCollision(){
+    var hasCollision = false;
+    for (var y = 0; y < 2; y++) {
+      for (var x = 0; x < 4; x++) {
+        if(boardModel[y + currPiece.y][x + currPiece.x] === 1 && currPiece.matrix[y][x] === 1){
+          boardView.update();
+          hasCollision = true;
         }
       }
     }
-
-    //
-    boardView.update();
-    if (!didLoose) timeOut = setTimeout(gameLoop, 100);
+    return hasCollision;
   }
 
   function freezeCurrPiece() {
