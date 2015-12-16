@@ -75,6 +75,7 @@ $(document).ready(function() {
         break;
       case 32:
         //console.log('space');
+        moveAllTheWayDown();
         break;
       default:
         //console.log(e.keyCode);
@@ -117,6 +118,27 @@ $(document).ready(function() {
     return didLoose;
   }
 
+  function moveAllTheWayDown() {
+    var didLoose = false;
+    var resolved = false;
+    do{
+      if (currPiece.y === 20 - currPiece.height()) {
+        didLoose = freezeCurrPiece();
+        resolved = true;
+      } else {
+        currPiece.y++;
+        var hasCollision = checkCollision();
+        if (hasCollision) {
+          currPiece.y--;
+          didLoose = freezeCurrPiece();
+          resolved = true;
+        }
+      }
+    }while(!resolved)
+
+    return didLoose;
+  }
+  
   function moveLeft() {
     var didLoose = false;
     currPiece.x--;
