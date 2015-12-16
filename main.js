@@ -57,24 +57,24 @@ $(document).ready(function() {
   $("body").keydown(function(e) {
     switch (e.keyCode) {
     case 37:
-      console.log('left');
+      //console.log('left');
       if (currPiece && currPiece.x !== 0) currPiece.x--;
       break;
     case 38:
-      console.log('up');
+      //console.log('up');
       //if (currPiece) currPiece.y--;
       break;
     case 39:
-      console.log('right');
+      //console.log('right');
       if (currPiece && currPiece.x < 10 - currPiece.width()) currPiece.x++;
       break;
     case 40:
-      console.log('down');
+      //console.log('down');
       if (currPiece) currPiece.y++;
       //check collision
       break;
     case 32:
-      console.log('space');
+      //console.log('space');
       break;
     default:
       //console.log(e.keyCode);
