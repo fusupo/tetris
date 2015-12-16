@@ -86,6 +86,7 @@ $(document).ready(function() {
   // DEFINE GAME LOOP
   function gameLoop() {
     currentTime++;
+    var didLoose = false;
     if (currPiece === undefined) {
       var pieceTpl = pieces[Math.floor(Math.random() * pieces.length)];
       currPiece = new PieceM(pieceTpl);
@@ -93,7 +94,7 @@ $(document).ready(function() {
       boardView.currPiece = currPiece;
     } else {
       if (currPiece.y === 20 - currPiece.height()) {
-        freezeCurrPiece();
+        didLoose = freezeCurrPiece();
       }else{
         currPiece.y++;
         //check Collision
@@ -105,16 +106,17 @@ $(document).ready(function() {
         }
         if(hasCollision){
           currPiece.y--;
-          freezeCurrPiece();
+          didLoose = freezeCurrPiece();
         }
       }
     }
     //
     boardView.update();
-    timeOut = setTimeout(gameLoop, 1000);
+    if(!didLoose) timeOut = setTimeout(gameLoop, 100);
   }
 
   function freezeCurrPiece(){
+    var didLoose = false;
     for (var y = 0; y < 2; y++) {
       for (var x = 0; x < 4; x++) {
         if(currPiece.matrix[y][x] === 1){
@@ -122,8 +124,16 @@ $(document).ready(function() {
         };
       }
     }
+
+    //did loose?
+    if(currPiece.y === 0){
+      console.log('GAME OVER, YOU LOOSE!!!!!!');
+      didLoose = true;
+    }
+
     currPiece = undefined;
     boardView.currPiece = undefined;
+    return didLoose;
   }
 
   // START GAME LOOP

@@ -6,8 +6,8 @@ var Board = function(w, h, cw, ch, model) {
   this.currPiece = undefined;
   this.drawRect = function(x, y, color) {
     var rect = s.rect(x * cw, y * ch, cw, ch, 1).attr({
-      fill: "none",
-      stroke: color,
+      fill: color,
+      stroke: "#000000",
       strokeWidth: 1
     });
     rects.push(rect);
