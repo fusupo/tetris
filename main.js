@@ -15,32 +15,32 @@ $(document).ready(function() {
 
   //INIT PIECES
   var pI = [
-    [1, 1, 1, 1],
-    [0, 0, 0, 0]
+    [1, 1, 1, 1]//,
+    // [0, 0, 0, 0]
   ];
   var pJ = [
-    [1, 1, 1, 0],
-    [0, 0, 1, 0]
+    [1, 1, 1],//, 0],
+    [0, 0, 1]//, 0]
   ];
   var pL = [
-    [1, 1, 1, 0],
-    [1, 0, 0, 0]
+    [1, 1, 1],//, 0],
+    [1, 0, 0]//, 0]
   ];
   var pO = [
-    [1, 1, 0, 0],
-    [1, 1, 0, 0]
+    [1, 1],//, 0, 0],
+    [1, 1]//, 0, 0]
   ];
   var pS = [
-    [0, 1, 1, 0],
-    [1, 1, 0, 0]
+    [0, 1, 1],//, 0],
+    [1, 1, 0]//, 0]
   ];
   var pT = [
-    [1, 1, 1, 0],
-    [0, 1, 0, 0]
+    [1, 1, 1],//, 0],
+    [0, 1, 0]//, 0]
   ];
   var pZ = [
-    [1, 1, 0, 0],
-    [0, 1, 1, 0]
+    [1, 1, 0],//, 0],
+    [0, 1, 1]//, 0]
   ];
   var pieces = [pI, pJ, pL, pO, pS, pT, pZ];
 
@@ -143,9 +143,12 @@ $(document).ready(function() {
 
   function checkCollision() {
     var hasCollision = false;
-    for (var y = 0; y < currPiece.matrix.length; y++) {
+    // for (var y = 0; y < currPiece.matrix.length; y++) {
+    for(var y=0; y < currPiece.height(); y++){
       for (var x = 0; x < currPiece.matrix[0].length; x++) {
-        if (boardModel[y + currPiece.y][x + currPiece.x] === 1 && currPiece.matrix[y][x] === 1) {
+        var a = boardModel[y + currPiece.y][x + currPiece.x];
+        var b = currPiece.matrix[y][x];
+        if (a === 1 && b === 1) {
           boardView.update();
           hasCollision = true;
         }
