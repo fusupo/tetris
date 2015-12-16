@@ -1,6 +1,5 @@
 var PieceM = function(matrix, pivot) {
-  var matrix = matrix;
-  var pivot = pivot;
+  this.matrix = matrix;
   this.x = 0;
   this.y = 0;
   console.table(matrix);

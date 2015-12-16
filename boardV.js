@@ -20,7 +20,8 @@ var Board = function(w, h, cw, ch, model) {
       for (var y = 0; y < 2; y++) {
         for (var x = 0; x < 4; x++) {
           //boardModel[y][x] = pieceTpl[y][x];
-          this.drawRect(this.currPiece.x + x, this.currPiece.y + y);
+          if(this.currPiece.matrix[y][x] === 1){
+            this. drawRect (this.currPiece.x + x, this.currPiece.y + y);}
         }
       }
     }

@@ -85,7 +85,7 @@ $(document).ready(function() {
   // DEFINE GAME LOOP
   function gameLoop() {
     currentTime++;
-    console.log(currentTime);
+      //console.log(currentTime);
     //
     if (currPiece === undefined) {
       var pieceTpl = pieces[Math.floor(Math.random() * pieces.length)];
