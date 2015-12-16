@@ -16,6 +16,14 @@ var PieceM = function(matrix, pivot) {
   };
 
   this.height = function(){
-    return 2;
+    var maxh=0;
+    for(var y = 0; y < this.matrix.length; y++){
+      var row = this.matrix[y];
+      for(var x = 0; x < row.length; x++){
+        if(row[x] === 1) maxh = y+1;
+      }
+    }
+    
+    return maxh;
   };
 };

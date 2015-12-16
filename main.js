@@ -55,7 +55,7 @@ $(document).ready(function() {
 
   // Bind Keys //
   $("body").keydown(function(e) {
-    if(currPiece){
+    if (currPiece) {
       switch (e.keyCode) {
       case 37:
         //console.log('left');
@@ -71,7 +71,7 @@ $(document).ready(function() {
         break;
       case 40:
         //console.log('down');
-        moveDown();//currPiece.y++;
+        moveDown(); //currPiece.y++;
         break;
       case 32:
         //console.log('space');
@@ -102,7 +102,7 @@ $(document).ready(function() {
     boardView.update();
   }
 
-  function moveDown(){
+  function moveDown() {
     var didLoose = false;
     if (currPiece.y === 20 - currPiece.height()) {
       didLoose = freezeCurrPiece();
@@ -117,7 +117,7 @@ $(document).ready(function() {
     return didLoose;
   }
 
-  function moveLeft(){
+  function moveLeft() {
     var didLoose = false;
     currPiece.x--;
     var hasCollision = checkCollision();
@@ -127,7 +127,7 @@ $(document).ready(function() {
     return didLoose;
   }
 
-  function moveRight(){
+  function moveRight() {
     var didLoose = false;
     currPiece.x++;
     var hasCollision = checkCollision();
@@ -137,22 +137,15 @@ $(document).ready(function() {
     return didLoose;
   }
 
-  function rotatePiece(){
-    var temp = [[], [], [], []];
-    for (var y = 0; y < 2; y++) {
-      for (var x = 0; x < 4; x++) {
-        temp[x][y] = currPiece.matrix[y][x];
-      }
-    }
-    console.table(currPiece.matrix);
-    console.table(temp);
+  function rotatePiece() {
+    currPiece.matrix = rotateMatrix(currPiece.matrix);
   }
 
-  function checkCollision(){
+  function checkCollision() {
     var hasCollision = false;
-    for (var y = 0; y < 2; y++) {
-      for (var x = 0; x < 4; x++) {
-        if(boardModel[y + currPiece.y][x + currPiece.x] === 1 && currPiece.matrix[y][x] === 1){
+    for (var y = 0; y < currPiece.matrix.length; y++) {
+      for (var x = 0; x < currPiece.matrix[0].length; x++) {
+        if (boardModel[y + currPiece.y][x + currPiece.x] === 1 && currPiece.matrix[y][x] === 1) {
           boardView.update();
           hasCollision = true;
         }
@@ -165,8 +158,8 @@ $(document).ready(function() {
 
     var didLoose = false;
 
-    for (var y = 0; y < 2; y++) {
-      for (var x = 0; x < 4; x++) {
+    for (var y = 0; y < currPiece.matrix.length; y++) {
+      for (var x = 0; x < currPiece.matrix[0].length; x++) {
         if (currPiece.matrix[y][x] === 1) {
           boardModel[y + currPiece.y][x + currPiece.x] = 1;
         };
@@ -174,22 +167,22 @@ $(document).ready(function() {
     }
 
     var currRowIdx = 19;
-    do{
+    do {
       var filledColCount = 0;
       var row = boardModel[currRowIdx];
-      for(var i = 0; i < row.length; i++){
-        if(row[i] === 1){
+      for (var i = 0; i < row.length; i++) {
+        if (row[i] === 1) {
           filledColCount++;
         }
       }
-      if(filledColCount === row.length){
+      if (filledColCount === row.length) {
         boardModel.splice(currRowIdx, 1);
-        boardModel.unshift([0,0,0,0,0,0,0,0,0,0]);
-      }else{
+        boardModel.unshift([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+      } else {
         currRowIdx--;
       }
-    }while(currRowIdx >= 0 && filledColCount > 0);
-    
+    } while (currRowIdx >= 0 && filledColCount > 0);
+
     //did loose?
     if (currPiece.y === 0) {
       console.log('GAME OVER, YOU LOOSE!!!!!!');
@@ -200,7 +193,28 @@ $(document).ready(function() {
     boardView.currPiece = undefined;
     return didLoose;
   }
+  
+  var rotateMatrix = function(matrix, direction ) {
+    // Your code here.
 
+    direction = direction || 1;
+    var m = matrix.length,
+        n = (matrix[0] && matrix[0].length);
+    var output = [];
+    // We iterate with i,j in output order to transparently support rectangular arrays
+    for (var i = 0; i < n; i++) {
+      output[i] = [];
+      for (var j = 0; j < m; j++) {
+        if (direction > 0) { // rotate clockwise
+          output[i][j] = matrix[m-j-1][i];
+        } else if (direction < 0) { // rotate counterclockwise
+          output[i][j] = matrix[j][n-i-1];
+        }
+      }
+    }
+    return output;
+  };
+  
   // START GAME LOOP
   gameLoop();
 

@@ -17,8 +17,8 @@ var Board = function(w, h, cw, ch, model) {
       rects[i].remove();
     };
     if (this.currPiece !== undefined) {
-      for (var y = 0; y < 2; y++) {
-        for (var x = 0; x < 4; x++) {
+      for (var y = 0; y < this.currPiece.matrix.length; y++) {
+        for (var x = 0; x < this.currPiece.matrix[0].length; x++) {
           //boardModel[y][x] = pieceTpl[y][x];
           if (this.currPiece.matrix[y][x] === 1) {
             this.drawRect(this.currPiece.x + x, this.currPiece.y + y, '#ffffff');
