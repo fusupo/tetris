@@ -92,23 +92,38 @@ $(document).ready(function() {
       currPiece.x = 5 - Math.floor(currPiece.width() / 2);
       boardView.currPiece = currPiece;
     } else {
-      if (currPiece.y < 20 - currPiece.height()) {
-        currPiece.y++;
+      if (currPiece.y === 20 - currPiece.height()) {
+        freezeCurrPiece();
       }else{
-        for (var y = 0; y < 2; y++) {
-          for (var x = 0; x < 4; x++) {
-            if(currPiece.matrix[y][x] === 1){
-              boardModel[y + currPiece.y][x + currPiece.x] = 1;
-            };
+        currPiece.y++;
+        //check Collision
+        var hasCollision = false;
+        for(var y = 0; y < 2; y++){
+          for(var x = 0; x < 4; x++){
+            hasCollision = hasCollision || (boardModel[y + currPiece.y][x + currPiece.x] === 1);
           }
         }
-        currPiece = undefined;
-        boardView.currPiece = undefined;
+        if(hasCollision){
+          currPiece.y--;
+          freezeCurrPiece();
+        }
       }
     }
     //
     boardView.update();
     timeOut = setTimeout(gameLoop, 1000);
+  }
+
+  function freezeCurrPiece(){
+    for (var y = 0; y < 2; y++) {
+      for (var x = 0; x < 4; x++) {
+        if(currPiece.matrix[y][x] === 1){
+          boardModel[y + currPiece.y][x + currPiece.x] = 1;
+        };
+      }
+    }
+    currPiece = undefined;
+    boardView.currPiece = undefined;
   }
 
   // START GAME LOOP
