@@ -192,6 +192,8 @@ $(document).ready(function() {
       didLoose = true;
     }
 
+    boardView.updateBoard();
+    
     currPiece = undefined;
     boardView.currPiece = undefined;
     return didLoose;
