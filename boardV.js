@@ -4,31 +4,32 @@ var Board = function(w, h, cw, ch, model) {
   var bg = s.rect(0, 0, w, h);
   var rects = [];
   this.currPiece = undefined;
-  this.drawRect = function(x, y){
+  this.drawRect = function(x, y, color) {
     var rect = s.rect(x * cw, y * ch, cw, ch, 1).attr({
       fill: "none",
-      stroke: "#bada55",
+      stroke: color,
       strokeWidth: 1
     });
     rects.push(rect);
   };
   this.update = function() {
-    for(var i = 0; i < rects.length; i++){
+    for (var i = 0; i < rects.length; i++) {
       rects[i].remove();
     };
-    if(this.currPiece !== undefined){
+    if (this.currPiece !== undefined) {
       for (var y = 0; y < 2; y++) {
         for (var x = 0; x < 4; x++) {
           //boardModel[y][x] = pieceTpl[y][x];
-          if(this.currPiece.matrix[y][x] === 1){
-            this. drawRect (this.currPiece.x + x, this.currPiece.y + y);}
+          if (this.currPiece.matrix[y][x] === 1) {
+            this.drawRect(this.currPiece.x + x, this.currPiece.y + y, '#ffffff');
+          }
         }
       }
     }
     for (var y = 0; y < 20; y++) {
       for (var x = 0; x < 10; x++) {
         if (model[y][x] === 1) {
-          this.drawRect(x, y);
+          this.drawRect(x, y, "#bada55");
         }
       }
     }
