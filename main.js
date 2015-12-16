@@ -58,19 +58,20 @@ $(document).ready(function() {
     switch (e.keyCode) {
     case 37:
       console.log('left');
-      if (currPiece) currPiece.x--;
+      if (currPiece && currPiece.x !== 0) currPiece.x--;
       break;
     case 38:
       console.log('up');
-      if (currPiece) currPiece.y--;
+      //if (currPiece) currPiece.y--;
       break;
     case 39:
       console.log('right');
-      if (currPiece) currPiece.x++;
+      if (currPiece && currPiece.x < 10 - currPiece.width()) currPiece.x++;
       break;
     case 40:
       console.log('down');
       if (currPiece) currPiece.y++;
+      //check collision
       break;
     case 32:
       console.log('space');
@@ -101,7 +102,6 @@ $(document).ready(function() {
         //check Collision
         var hasCollision = false;
         for (var y = 0; y < 2; y++) {
-          console.log('WHY?',y)
           for (var x = 0; x < 4; x++) {
             if(boardModel[y + currPiece.y][x + currPiece.x] === 1 && currPiece.matrix[y][x] === 1){
               boardView.update();
