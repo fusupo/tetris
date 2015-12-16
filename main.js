@@ -123,7 +123,9 @@ $(document).ready(function() {
   }
 
   function freezeCurrPiece() {
+
     var didLoose = false;
+
     for (var y = 0; y < 2; y++) {
       for (var x = 0; x < 4; x++) {
         if (currPiece.matrix[y][x] === 1) {
@@ -132,6 +134,23 @@ $(document).ready(function() {
       }
     }
 
+    var currRowIdx = 19;
+    do{
+      var filledColCount = 0;
+      var row = boardModel[currRowIdx];
+      for(var i = 0; i < row.length; i++){
+        if(row[i] === 1){
+          filledColCount++;
+        }
+      }
+      if(filledColCount === row.length){
+        boardModel.splice(currRowIdx, 1);
+        boardModel.unshift([0,0,0,0,0,0,0,0,0,0]);
+      }else{
+        currRowIdx--;
+      }
+    }while(currRowIdx >= 0 && filledColCount > 0);
+    
     //did loose?
     if (currPiece.y === 0) {
       console.log('GAME OVER, YOU LOOSE!!!!!!');
