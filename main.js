@@ -95,38 +95,45 @@ $(document).ready(function() {
     } else {
       if (currPiece.y === 20 - currPiece.height()) {
         didLoose = freezeCurrPiece();
-      }else{
+      } else {
         currPiece.y++;
+
         //check Collision
         var hasCollision = false;
-        for(var y = 0; y < 2; y++){
-          for(var x = 0; x < 4; x++){
-            hasCollision = hasCollision || (boardModel[y + currPiece.y][x + currPiece.x] === 1);
+        for (var y = 0; y < 2; y++) {
+          console.log('WHY?',y)
+          for (var x = 0; x < 4; x++) {
+            if(boardModel[y + currPiece.y][x + currPiece.x] === 1 && currPiece.matrix[y][x] === 1){
+              boardView.update();
+              hasCollision = true;
+            }
           }
         }
-        if(hasCollision){
+
+        if (hasCollision) {
           currPiece.y--;
           didLoose = freezeCurrPiece();
         }
       }
     }
+
     //
     boardView.update();
-    if(!didLoose) timeOut = setTimeout(gameLoop, 100);
+    if (!didLoose) timeOut = setTimeout(gameLoop, 100);
   }
 
-  function freezeCurrPiece(){
+  function freezeCurrPiece() {
     var didLoose = false;
     for (var y = 0; y < 2; y++) {
       for (var x = 0; x < 4; x++) {
-        if(currPiece.matrix[y][x] === 1){
+        if (currPiece.matrix[y][x] === 1) {
           boardModel[y + currPiece.y][x + currPiece.x] = 1;
         };
       }
     }
 
     //did loose?
-    if(currPiece.y === 0){
+    if (currPiece.y === 0) {
       console.log('GAME OVER, YOU LOOSE!!!!!!');
       didLoose = true;
     }
