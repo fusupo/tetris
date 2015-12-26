@@ -139,22 +139,13 @@ $(document).ready(function() {
   }
 
   function moveLateral(dir) {
-    if (dir === 'l') {
-      //move left
-      if (currPiece.x !== 0) {
-        currPiece.x--;
-        if (checkPieceCollision()) {
-          currPiece.x++;
-        }
+    var canMoveP = dir === 'l' ? currPiece.x !== 0 : currPiece.x < 10 - currPiece.width();
+    var positiveMove = dir === 'l' ? -1 : 1;
+    if (canMoveP) {
+      currPiece.x += positiveMove;
+      if (checkPieceCollision()) {
+        currPiece.x -= positiveMove;
       }
-    } else if (dir === 'r') {
-      //move right
-      if (currPiece.x < 10 - currPiece.width()) {
-        currPiece.x++;
-        if (checkPieceCollision()) {
-          currPiece.x--;
-        }
-      };
     }
   }
 
