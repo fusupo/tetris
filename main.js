@@ -54,7 +54,7 @@ $(document).ready(function() {
       case 37: // 'left'
       case 65: // 'a'
       case 74: // 'j'
-        if (currPiece.x !== 0) moveLeft();
+        moveLateral('l');
         break;
       case 38: // 'up'
       case 87: // 'w'
@@ -64,7 +64,7 @@ $(document).ready(function() {
       case 39: // 'right'
       case 68: // 'd'
       case 76: // 'l'
-        if (currPiece.x < 10 - currPiece.width()) moveRight();
+        moveLateral('r');
         break;
       case 40: // 'down'
       case 83: // 's'
@@ -92,14 +92,14 @@ $(document).ready(function() {
       nextPiece.x = 5 - Math.floor(nextPiece.width() / 2);
       boardView.nextPiece = nextPiece;
       boardView.updateNextPiece();
-      didLoose = checkCollision();
+      didLoose = checkPieceCollision();
     } else {
       moveDown();
     }
     if (!didLoose) {
       timeOut = setTimeout(gameLoop, 1000);
-    }else{
-      console.log('you loose nukkah!');
+    } else {
+      console.log('you loose fool!');
       currPiece = undefined;
     }
     boardView.update();
@@ -110,7 +110,7 @@ $(document).ready(function() {
       freezeCurrPiece();
     } else {
       currPiece.y++;
-      var hasCollision = checkCollision();
+      var hasCollision = checkPieceCollision();
       if (hasCollision) {
         currPiece.y--;
         freezeCurrPiece();
@@ -127,7 +127,7 @@ $(document).ready(function() {
         resolved = true;
       } else {
         currPiece.y++;
-        var hasCollision = checkCollision();
+        var hasCollision = checkPieceCollision();
         if (hasCollision) {
           currPiece.y--;
           freezeCurrPiece();
@@ -138,31 +138,34 @@ $(document).ready(function() {
     gameLoop();
   }
 
-  function moveLeft() {
-    currPiece.x--;
-    var hasCollision = checkCollision();
-    if (hasCollision) {
-      currPiece.x++;
-    }
-  }
-
-  function moveRight() {
-    currPiece.x++;
-    var hasCollision = checkCollision();
-    if (hasCollision) {
-      currPiece.x--;
+  function moveLateral(dir) {
+    if (dir === 'l') {
+      //move left
+      if (currPiece.x !== 0) {
+        currPiece.x--;
+        if (checkPieceCollision()) {
+          currPiece.x++;
+        }
+      }
+    } else if (dir === 'r') {
+      //move right
+      if (currPiece.x < 10 - currPiece.width()) {
+        currPiece.x++;
+        if (checkPieceCollision()) {
+          currPiece.x--;
+        }
+      };
     }
   }
 
   function rotatePiece() {
     currPiece.matrix = rotateMatrix(currPiece.matrix);
     while (checkWallCollision()) {
-      //moveRight();
       currPiece.x--;
     };
   }
 
-  function checkCollision() {
+  function checkPieceCollision() {
     var hasCollision = false;
     for (var y = 0; y < currPiece.height(); y++) {
       for (var x = 0; x < currPiece.matrix[0].length; x++) {
