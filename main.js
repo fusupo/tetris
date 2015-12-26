@@ -81,7 +81,7 @@ $(document).ready(function() {
         moveAllTheWayDown();
         break;
       default:
-        console.log(e.keyCode);
+        // console.log(e.keyCode);
         break;
       }
     }
@@ -170,6 +170,10 @@ $(document).ready(function() {
 
   function rotatePiece() {
     currPiece.matrix = rotateMatrix(currPiece.matrix);
+    while( checkWallCollision() ){
+      //moveRight();
+      currPiece.x--;
+    };
   }
 
   function checkCollision() {
@@ -180,12 +184,23 @@ $(document).ready(function() {
         var a = boardModel[y + currPiece.y][x + currPiece.x];
         var b = currPiece.matrix[y][x];
         if (a === 1 && b === 1) {
-          boardView.update();
+          boardView.update(); // 'da fuk?
           hasCollision = true;
         }
       }
     }
     return hasCollision;
+  }
+
+  function checkWallCollision(){
+    for (var y = 0; y < currPiece.height(); y++) {
+      for (var x = 0; x < currPiece.matrix[0].length; x++) {
+        if (x + currPiece.x>=10){
+          return true;
+        };
+      }
+    }
+    return false;
   }
 
   function freezeCurrPiece() {
@@ -228,8 +243,6 @@ $(document).ready(function() {
   }
 
   var rotateMatrix = function(matrix, direction) {
-    // Your code here.
-
     direction = direction || 1;
     var m = matrix.length,
         n = (matrix[0] && matrix[0].length);
