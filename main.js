@@ -1,18 +1,14 @@
 $(document).ready(function() {
-  console.log('READY!');
-
   var width = 100;
   var height = 200;
   var cw = width / 10;
   var ch = height / 20;
   var d = 1;
   var currentTime = 0;
-
   var boardModel = [];
   var boardView = new Board(width, height, cw, ch, boardModel);
   var currPiece;
   var timeOut;
-
   //INIT PIECES
   var pI = [
     [1, 1, 1, 1] //,
@@ -43,7 +39,6 @@ $(document).ready(function() {
     [0, 1, 1] //, 0]
   ];
   var pieces = [pI, pJ, pL, pO, pS, pT, pZ];
-
   //INIT BOARD MODEL
   for (var y = 0; y < 20; y++) {
     var tRow = [];
@@ -52,7 +47,6 @@ $(document).ready(function() {
     }
     boardModel.push(tRow);
   };
-
   // Bind Keys //
   $("body").keydown(function(e) {
     if (currPiece) {
@@ -87,90 +81,82 @@ $(document).ready(function() {
     }
     boardView.update();
   });
-
   // DEFINE GAME LOOP
   function gameLoop() {
     var didLoose = false;
     if (currPiece === undefined) {
       currPiece = boardView.nextPiece;
       boardView.currPiece = currPiece;
-      boardView.nextPiece = undefined;
-    } else {
-      didLoose = moveDown();
-    }
-
-    if (boardView.nextPiece === undefined) {
       var pieceTpl = pieces[Math.floor(Math.random() * pieces.length)];
       var nextPiece = new PieceM(pieceTpl);
       nextPiece.x = 5 - Math.floor(nextPiece.width() / 2);
       boardView.nextPiece = nextPiece;
       boardView.updateNextPiece();
+      didLoose = checkCollision();
+    } else {
+      moveDown();
     }
-    //
     if (!didLoose) {
       timeOut = setTimeout(gameLoop, 1000);
-    };
+    }else{
+      console.log('you loose nukkah!');
+      currPiece = undefined;
+    }
     boardView.update();
   }
 
   function moveDown() {
-    var didLoose = false;
     if (currPiece.y === 20 - currPiece.height()) {
-      didLoose = freezeCurrPiece();
+      freezeCurrPiece();
     } else {
       currPiece.y++;
       var hasCollision = checkCollision();
       if (hasCollision) {
         currPiece.y--;
-        didLoose = freezeCurrPiece();
+        freezeCurrPiece();
       }
     }
-    return didLoose;
   }
 
   function moveAllTheWayDown() {
-    var didLoose = false;
+    clearTimeout(timeOut);
     var resolved = false;
     do {
       if (currPiece.y === 20 - currPiece.height()) {
-        didLoose = freezeCurrPiece();
+        freezeCurrPiece();
         resolved = true;
       } else {
         currPiece.y++;
         var hasCollision = checkCollision();
         if (hasCollision) {
           currPiece.y--;
-          didLoose = freezeCurrPiece();
+          freezeCurrPiece();
           resolved = true;
         }
       }
     } while (!resolved);
-    return didLoose;
+    gameLoop();
   }
 
   function moveLeft() {
-    var didLoose = false;
     currPiece.x--;
     var hasCollision = checkCollision();
     if (hasCollision) {
       currPiece.x++;
     }
-    return didLoose;
   }
 
   function moveRight() {
-    var didLoose = false;
     currPiece.x++;
     var hasCollision = checkCollision();
     if (hasCollision) {
       currPiece.x--;
     }
-    return didLoose;
   }
 
   function rotatePiece() {
     currPiece.matrix = rotateMatrix(currPiece.matrix);
-    while( checkWallCollision() ){
+    while (checkWallCollision()) {
       //moveRight();
       currPiece.x--;
     };
@@ -178,7 +164,6 @@ $(document).ready(function() {
 
   function checkCollision() {
     var hasCollision = false;
-    // for (var y = 0; y < currPiece.matrix.length; y++) {
     for (var y = 0; y < currPiece.height(); y++) {
       for (var x = 0; x < currPiece.matrix[0].length; x++) {
         var a = boardModel[y + currPiece.y][x + currPiece.x];
@@ -192,10 +177,10 @@ $(document).ready(function() {
     return hasCollision;
   }
 
-  function checkWallCollision(){
+  function checkWallCollision() {
     for (var y = 0; y < currPiece.height(); y++) {
       for (var x = 0; x < currPiece.matrix[0].length; x++) {
-        if (x + currPiece.x>=10){
+        if (x + currPiece.x >= 10) {
           return true;
         };
       }
@@ -204,7 +189,6 @@ $(document).ready(function() {
   }
 
   function freezeCurrPiece() {
-    var didLoose = false;
     for (var y = 0; y < currPiece.matrix.length; y++) {
       for (var x = 0; x < currPiece.matrix[0].length; x++) {
         if (currPiece.matrix[y][x] === 1) {
@@ -228,18 +212,9 @@ $(document).ready(function() {
         currRowIdx--;
       }
     } while (currRowIdx >= 0 && filledColCount > 0);
-    
-    //did loose?
-    if (currPiece.y === 0) {
-      console.log('GAME OVER, YOU LOOSE!!!!!!');
-      didLoose = true;
-    }
-
     boardView.updateBoard();
-
     currPiece = undefined;
     boardView.currPiece = undefined;
-    return didLoose;
   }
 
   var rotateMatrix = function(matrix, direction) {
@@ -263,9 +238,9 @@ $(document).ready(function() {
 
   // START GAME LOOP
   var pieceTpl = pieces[Math.floor(Math.random() * pieces.length)];
-  currPiece = new PieceM(pieceTpl);
-  currPiece.x = 5 - Math.floor(currPiece.width() / 2);
-  boardView.currPiece = currPiece;
+  var nextPiece = new PieceM(pieceTpl);
+  nextPiece.x = 5 - Math.floor(nextPiece.width() / 2);
+  boardView.nextPiece = nextPiece;
+  boardView.updateNextPiece();
   gameLoop();
-
 });
