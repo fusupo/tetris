@@ -15,32 +15,32 @@ $(document).ready(function() {
 
   //INIT PIECES
   var pI = [
-    [1, 1, 1, 1]//,
+    [1, 1, 1, 1] //,
     // [0, 0, 0, 0]
   ];
   var pJ = [
-    [1, 1, 1],//, 0],
-    [0, 0, 1]//, 0]
+    [1, 1, 1], //, 0],
+    [0, 0, 1] //, 0]
   ];
   var pL = [
-    [1, 1, 1],//, 0],
-    [1, 0, 0]//, 0]
+    [1, 1, 1], //, 0],
+    [1, 0, 0] //, 0]
   ];
   var pO = [
-    [1, 1],//, 0, 0],
-    [1, 1]//, 0, 0]
+    [1, 1], //, 0, 0],
+    [1, 1] //, 0, 0]
   ];
   var pS = [
-    [0, 1, 1],//, 0],
-    [1, 1, 0]//, 0]
+    [0, 1, 1], //, 0],
+    [1, 1, 0] //, 0]
   ];
   var pT = [
-    [1, 1, 1],//, 0],
-    [0, 1, 0]//, 0]
+    [1, 1, 1], //, 0],
+    [0, 1, 0] //, 0]
   ];
   var pZ = [
-    [1, 1, 0],//, 0],
-    [0, 1, 1]//, 0]
+    [1, 1, 0], //, 0],
+    [0, 1, 1] //, 0]
   ];
   var pieces = [pI, pJ, pL, pO, pS, pT, pZ];
 
@@ -91,13 +91,21 @@ $(document).ready(function() {
   function gameLoop() {
     var didLoose = false;
     if (currPiece === undefined) {
-      var pieceTpl = pieces[Math.floor(Math.random() * pieces.length)];
-      currPiece = new PieceM(pieceTpl);
-      currPiece.x = 5 - Math.floor(currPiece.width() / 2);
+      currPiece = boardView.nextPiece;
       boardView.currPiece = currPiece;
+      boardView.nextPiece = undefined;
     } else {
       didLoose = moveDown();
     }
+
+    if (boardView.nextPiece === undefined) {
+      var pieceTpl = pieces[Math.floor(Math.random() * pieces.length)];
+      var nextPiece = new PieceM(pieceTpl);
+      nextPiece.x = 5 - Math.floor(nextPiece.width() / 2);
+      boardView.nextPiece = nextPiece;
+      boardView.updateNextPiece();
+    }
+
     //
     if (!didLoose) timeOut = setTimeout(gameLoop, 1000);
     boardView.update();
@@ -121,7 +129,7 @@ $(document).ready(function() {
   function moveAllTheWayDown() {
     var didLoose = false;
     var resolved = false;
-    do{
+    do {
       if (currPiece.y === 20 - currPiece.height()) {
         didLoose = freezeCurrPiece();
         resolved = true;
@@ -134,11 +142,11 @@ $(document).ready(function() {
           resolved = true;
         }
       }
-    }while(!resolved)
+    } while (!resolved)
 
     return didLoose;
   }
-  
+
   function moveLeft() {
     var didLoose = false;
     currPiece.x--;
@@ -166,7 +174,7 @@ $(document).ready(function() {
   function checkCollision() {
     var hasCollision = false;
     // for (var y = 0; y < currPiece.matrix.length; y++) {
-    for(var y=0; y < currPiece.height(); y++){
+    for (var y = 0; y < currPiece.height(); y++) {
       for (var x = 0; x < currPiece.matrix[0].length; x++) {
         var a = boardModel[y + currPiece.y][x + currPiece.x];
         var b = currPiece.matrix[y][x];
@@ -215,13 +223,13 @@ $(document).ready(function() {
     }
 
     boardView.updateBoard();
-    
+
     currPiece = undefined;
     boardView.currPiece = undefined;
     return didLoose;
   }
-  
-  var rotateMatrix = function(matrix, direction ) {
+
+  var rotateMatrix = function(matrix, direction) {
     // Your code here.
 
     direction = direction || 1;
@@ -233,16 +241,20 @@ $(document).ready(function() {
       output[i] = [];
       for (var j = 0; j < m; j++) {
         if (direction > 0) { // rotate clockwise
-          output[i][j] = matrix[m-j-1][i];
+          output[i][j] = matrix[m - j - 1][i];
         } else if (direction < 0) { // rotate counterclockwise
-          output[i][j] = matrix[j][n-i-1];
+          output[i][j] = matrix[j][n - i - 1];
         }
       }
     }
     return output;
   };
-  
+
   // START GAME LOOP
+  var pieceTpl = pieces[Math.floor(Math.random() * pieces.length)];
+  currPiece = new PieceM(pieceTpl);
+  currPiece.x = 5 - Math.floor(currPiece.width() / 2);
+  boardView.currPiece = currPiece;
   gameLoop();
 
 });
