@@ -57,33 +57,34 @@ $(document).ready(function() {
   $("body").keydown(function(e) {
     if (currPiece) {
       switch (e.keyCode) {
-      case 37:
-        //console.log('left');
+      case 37: // 'left'
+      case 65: // 'a'
+      case 74: // 'j'
         if (currPiece.x !== 0) moveLeft();
         break;
-      case 38:
-        //console.log('up');
+      case 38: // 'up'
+      case 87: // 'w'
+      case 73: // 'i'
         rotatePiece();
         break;
-      case 39:
-        //console.log('right');
+      case 39: // 'right'
+      case 68: // 'd'
+      case 76: // 'l'
         if (currPiece.x < 10 - currPiece.width()) moveRight();
         break;
-      case 40:
-        //console.log('down');
-        moveDown(); //currPiece.y++;
+      case 40: // 'down'
+      case 83: // 's'
+      case 75: // 'k'
+        moveDown();
         break;
-      case 32:
-        //console.log('space');
+      case 32: // 'space'
         moveAllTheWayDown();
         break;
       default:
-        //console.log(e.keyCode);
+        console.log(e.keyCode);
         break;
       }
     }
-    // clearTimeout(timeOut);
-    // gameLoop();
     boardView.update();
   });
 
@@ -105,9 +106,10 @@ $(document).ready(function() {
       boardView.nextPiece = nextPiece;
       boardView.updateNextPiece();
     }
-
     //
-    if (!didLoose) timeOut = setTimeout(gameLoop, 1000);
+    if (!didLoose) {
+      timeOut = setTimeout(gameLoop, 1000);
+    };
     boardView.update();
   }
 
@@ -142,8 +144,7 @@ $(document).ready(function() {
           resolved = true;
         }
       }
-    } while (!resolved)
-
+    } while (!resolved);
     return didLoose;
   }
 
@@ -188,9 +189,7 @@ $(document).ready(function() {
   }
 
   function freezeCurrPiece() {
-
     var didLoose = false;
-
     for (var y = 0; y < currPiece.matrix.length; y++) {
       for (var x = 0; x < currPiece.matrix[0].length; x++) {
         if (currPiece.matrix[y][x] === 1) {
@@ -198,7 +197,6 @@ $(document).ready(function() {
         };
       }
     }
-
     var currRowIdx = 19;
     do {
       var filledColCount = 0;
@@ -215,7 +213,7 @@ $(document).ready(function() {
         currRowIdx--;
       }
     } while (currRowIdx >= 0 && filledColCount > 0);
-
+    
     //did loose?
     if (currPiece.y === 0) {
       console.log('GAME OVER, YOU LOOSE!!!!!!');
