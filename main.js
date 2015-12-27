@@ -7,7 +7,7 @@ $(document).ready(function() {
   var currentTime = 0;
   var boardModel = [];
   var boardView = new Board(width, height, cw, ch, boardModel);
-  var currPiece;
+  var currTetrimino;
   var timeOut;
   //INIT PIECES
   var pI = [
@@ -38,7 +38,7 @@ $(document).ready(function() {
     [1, 1, 0], //, 0],
     [0, 1, 1] //, 0]
   ];
-  var pieces = [pI, pJ, pL, pO, pS, pT, pZ];
+  var tetriminos = [pI, pJ, pL, pO, pS, pT, pZ];
   //INIT BOARD MODEL
   for (var y = 0; y < 20; y++) {
     var tRow = [];
@@ -49,7 +49,7 @@ $(document).ready(function() {
   };
   // Bind Keys //
   $("body").keydown(function(e) {
-    if (currPiece) {
+    if (currTetrimino) {
       switch (e.keyCode) {
       case 37: // 'left'
       case 65: // 'a'
@@ -59,7 +59,7 @@ $(document).ready(function() {
       case 38: // 'up'
       case 87: // 'w'
       case 73: // 'i'
-        rotatePiece();
+        rotateTetrimino();
         break;
       case 39: // 'right'
       case 68: // 'd'
@@ -84,15 +84,15 @@ $(document).ready(function() {
   // DEFINE GAME LOOP
   function gameLoop() {
     var didLoose = false;
-    if (currPiece === undefined) {
-      currPiece = boardView.nextPiece;
-      boardView.currPiece = currPiece;
-      var pieceTpl = pieces[Math.floor(Math.random() * pieces.length)];
-      var nextPiece = new PieceM(pieceTpl);
-      nextPiece.x = 5 - Math.floor(nextPiece.width() / 2);
-      boardView.nextPiece = nextPiece;
-      boardView.updateNextPiece();
-      didLoose = checkPieceCollision();
+    if (currTetrimino === undefined) {
+      currTetrimino = boardView.nextTetrimino;
+      boardView.currTetrimino = currTetrimino;
+      var pieceTpl = tetriminos[Math.floor(Math.random() * tetriminos.length)];
+      var nextTetrimino = new TetriminoM(pieceTpl);
+      nextTetrimino.x = 5 - Math.floor(nextTetrimino.width() / 2);
+      boardView.nextTetrimino = nextTetrimino;
+      boardView.updateNextTetrimino();
+      didLoose = checkTetriminoCollision();
     } else {
       moveDown();
     }
@@ -100,20 +100,20 @@ $(document).ready(function() {
       timeOut = setTimeout(gameLoop, 1000);
     } else {
       console.log('you loose fool!');
-      currPiece = undefined;
+      currTetrimino = undefined;
     }
     boardView.update();
   }
 
   function moveDown() {
-    if (currPiece.y === 20 - currPiece.height()) {
-      freezeCurrPiece();
+    if (currTetrimino.y === 20 - currTetrimino.height()) {
+      freezeCurrTetrimino();
     } else {
-      currPiece.y++;
-      var hasCollision = checkPieceCollision();
+      currTetrimino.y++;
+      var hasCollision = checkTetriminoCollision();
       if (hasCollision) {
-        currPiece.y--;
-        freezeCurrPiece();
+        currTetrimino.y--;
+        freezeCurrTetrimino();
       }
     }
   }
@@ -122,15 +122,15 @@ $(document).ready(function() {
     clearTimeout(timeOut);
     var resolved = false;
     do {
-      if (currPiece.y === 20 - currPiece.height()) {
-        freezeCurrPiece();
+      if (currTetrimino.y === 20 - currTetrimino.height()) {
+        freezeCurrTetrimino();
         resolved = true;
       } else {
-        currPiece.y++;
-        var hasCollision = checkPieceCollision();
+        currTetrimino.y++;
+        var hasCollision = checkTetriminoCollision();
         if (hasCollision) {
-          currPiece.y--;
-          freezeCurrPiece();
+          currTetrimino.y--;
+          freezeCurrTetrimino();
           resolved = true;
         }
       }
@@ -139,29 +139,29 @@ $(document).ready(function() {
   }
 
   function moveLateral(dir) {
-    var canMoveP = dir === 'l' ? currPiece.x !== 0 : currPiece.x < 10 - currPiece.width();
+    var canMoveP = dir === 'l' ? currTetrimino.x !== 0 : currTetrimino.x < 10 - currTetrimino.width();
     var positiveMove = dir === 'l' ? -1 : 1;
     if (canMoveP) {
-      currPiece.x += positiveMove;
-      if (checkPieceCollision()) {
-        currPiece.x -= positiveMove;
+      currTetrimino.x += positiveMove;
+      if (checkTetriminoCollision()) {
+        currTetrimino.x -= positiveMove;
       }
     }
   }
 
-  function rotatePiece() {
-    currPiece.matrix = rotateMatrix(currPiece.matrix);
+  function rotateTetrimino() {
+    currTetrimino.matrix = rotateMatrix(currTetrimino.matrix);
     while (checkWallCollision()) {
-      currPiece.x--;
+      currTetrimino.x--;
     };
   }
 
-  function checkPieceCollision() {
+  function checkTetriminoCollision() {
     var hasCollision = false;
-    for (var y = 0; y < currPiece.height(); y++) {
-      for (var x = 0; x < currPiece.matrix[0].length; x++) {
-        var a = boardModel[y + currPiece.y][x + currPiece.x];
-        var b = currPiece.matrix[y][x];
+    for (var y = 0; y < currTetrimino.height(); y++) {
+      for (var x = 0; x < currTetrimino.matrix[0].length; x++) {
+        var a = boardModel[y + currTetrimino.y][x + currTetrimino.x];
+        var b = currTetrimino.matrix[y][x];
         if (a === 1 && b === 1) {
           boardView.update(); // 'da fuk?
           hasCollision = true;
@@ -172,9 +172,9 @@ $(document).ready(function() {
   }
 
   function checkWallCollision() {
-    for (var y = 0; y < currPiece.height(); y++) {
-      for (var x = 0; x < currPiece.matrix[0].length; x++) {
-        if (x + currPiece.x >= 10) {
+    for (var y = 0; y < currTetrimino.height(); y++) {
+      for (var x = 0; x < currTetrimino.matrix[0].length; x++) {
+        if (x + currTetrimino.x >= 10) {
           return true;
         };
       }
@@ -182,11 +182,11 @@ $(document).ready(function() {
     return false;
   }
 
-  function freezeCurrPiece() {
-    for (var y = 0; y < currPiece.matrix.length; y++) {
-      for (var x = 0; x < currPiece.matrix[0].length; x++) {
-        if (currPiece.matrix[y][x] === 1) {
-          boardModel[y + currPiece.y][x + currPiece.x] = 1;
+  function freezeCurrTetrimino() {
+    for (var y = 0; y < currTetrimino.matrix.length; y++) {
+      for (var x = 0; x < currTetrimino.matrix[0].length; x++) {
+        if (currTetrimino.matrix[y][x] === 1) {
+          boardModel[y + currTetrimino.y][x + currTetrimino.x] = 1;
         };
       }
     }
@@ -207,8 +207,8 @@ $(document).ready(function() {
       }
     } while (currRowIdx >= 0 && filledColCount > 0);
     boardView.updateBoard();
-    currPiece = undefined;
-    boardView.currPiece = undefined;
+    currTetrimino = undefined;
+    boardView.currTetrimino = undefined;
   }
 
   var rotateMatrix = function(matrix, direction) {
@@ -231,10 +231,10 @@ $(document).ready(function() {
   };
 
   // START GAME LOOP
-  var pieceTpl = pieces[Math.floor(Math.random() * pieces.length)];
-  var nextPiece = new PieceM(pieceTpl);
-  nextPiece.x = 5 - Math.floor(nextPiece.width() / 2);
-  boardView.nextPiece = nextPiece;
-  boardView.updateNextPiece();
+  var pieceTpl = tetriminos[Math.floor(Math.random() * tetriminos.length)];
+  var nextTetrimino = new TetriminoM(pieceTpl);
+  nextTetrimino.x = 5 - Math.floor(nextTetrimino.width() / 2);
+  boardView.nextTetrimino = nextTetrimino;
+  boardView.updateNextTetrimino();
   gameLoop();
 });
