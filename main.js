@@ -1,4 +1,5 @@
 $(document).ready(function() {
+
   var width = 100;
   var height = 200;
   var cw = width / 10;
@@ -9,34 +10,37 @@ $(document).ready(function() {
   var boardView = new Board(width, height, cw, ch, boardModel);
   var currTetrimino;
   var timeOut;
+
+  var lastDropTime;
+  var dropSpeed = 500;
+   
   //INIT PIECES
   var pI = [
-    [1, 1, 1, 1] //,
-    // [0, 0, 0, 0]
+    [1, 1, 1, 1],
   ];
   var pJ = [
-    [1, 1, 1], //, 0],
-    [0, 0, 1] //, 0]
+    [1, 1, 1],
+    [0, 0, 1]
   ];
   var pL = [
-    [1, 1, 1], //, 0],
-    [1, 0, 0] //, 0]
+    [1, 1, 1],
+    [1, 0, 0]
   ];
   var pO = [
-    [1, 1], //, 0, 0],
-    [1, 1] //, 0, 0]
+    [1, 1],
+    [1, 1]
   ];
   var pS = [
-    [0, 1, 1], //, 0],
-    [1, 1, 0] //, 0]
+    [0, 1, 1],
+    [1, 1, 0]
   ];
   var pT = [
-    [1, 1, 1], //, 0],
-    [0, 1, 0] //, 0]
+    [1, 1, 1],
+    [0, 1, 0]
   ];
   var pZ = [
-    [1, 1, 0], //, 0],
-    [0, 1, 1] //, 0]
+    [1, 1, 0],
+    [0, 1, 1] 
   ];
   var tetriminos = [pI, pJ, pL, pO, pS, pT, pZ];
   //INIT BOARD MODEL
@@ -81,29 +85,6 @@ $(document).ready(function() {
     }
     boardView.update();
   });
-  // DEFINE GAME LOOP
-  function gameLoop() {
-    var didLoose = false;
-    if (currTetrimino === undefined) {
-      currTetrimino = boardView.nextTetrimino;
-      boardView.currTetrimino = currTetrimino;
-      var pieceTpl = tetriminos[Math.floor(Math.random() * tetriminos.length)];
-      var nextTetrimino = new TetriminoM(pieceTpl);
-      nextTetrimino.x = 5 - Math.floor(nextTetrimino.width() / 2);
-      boardView.nextTetrimino = nextTetrimino;
-      boardView.updateNextTetrimino();
-      didLoose = checkTetriminoCollision();
-    } else {
-      moveDown();
-    }
-    if (!didLoose) {
-      timeOut = setTimeout(gameLoop, 1000);
-    } else {
-      console.log('you loose fool!');
-      currTetrimino = undefined;
-    }
-    boardView.update();
-  }
 
   function moveDown() {
     if (currTetrimino.y === 20 - currTetrimino.height()) {
@@ -230,6 +211,36 @@ $(document).ready(function() {
     return output;
   };
 
+  // DEFINE GAME LOOP
+  function gameLoop(timestamp) {
+    var didLoose = false;
+    if (currTetrimino === undefined) {
+      currTetrimino = boardView.nextTetrimino;
+      boardView.currTetrimino = currTetrimino;
+      var pieceTpl = tetriminos[Math.floor(Math.random() * tetriminos.length)];
+      var nextTetrimino = new TetriminoM(pieceTpl);
+      nextTetrimino.x = 5 - Math.floor(nextTetrimino.width() / 2);
+      boardView.nextTetrimino = nextTetrimino;
+      boardView.updateNextTetrimino();
+      didLoose = checkTetriminoCollision();
+      boardView.update();
+    } else {
+      if (!lastDropTime) lastDropTime = timestamp;
+      var progress = timestamp - lastDropTime;
+      if (progress >= dropSpeed) {
+        lastDropTime = timestamp;
+        moveDown();
+        boardView.update();
+      }
+    }
+    if (!didLoose) {
+      window.requestAnimationFrame(gameLoop);
+    } else {
+      console.log('you loose fool!');
+      currTetrimino = undefined;
+    }
+  }
+
   // START GAME LOOP
   var pieceTpl = tetriminos[Math.floor(Math.random() * tetriminos.length)];
   var nextTetrimino = new TetriminoM(pieceTpl);
@@ -237,4 +248,5 @@ $(document).ready(function() {
   boardView.nextTetrimino = nextTetrimino;
   boardView.updateNextTetrimino();
   gameLoop();
+
 });
