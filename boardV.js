@@ -7,6 +7,10 @@ var Board = function(w, h, cw, ch, model) {
   var tRects = [];
   var nRects = [];
 
+  var linesText = s.text(11 * cw, 50, "");
+  var scoreText = s.text(11 * cw, 70, "Snap");
+  scoreText.attr({text: 'score: 0'});
+  
   this.currTetrimino = undefined;
   this.nextTetrimino = undefined;
 
@@ -58,6 +62,10 @@ var Board = function(w, h, cw, ch, model) {
         }
       }
     }
+  };
+
+  this.updateLineCount = function(lineCount){
+    linesText.attr({text: 'lines: ' + lineCount});
   };
 
 };
