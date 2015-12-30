@@ -23,4 +23,5 @@ var TetriminoM = function(matrix, pivot) {
     }
     return maxh;
   };
+  console.log('somecrap');
 };
